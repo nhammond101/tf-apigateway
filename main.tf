@@ -24,6 +24,11 @@ resource "aws_api_gateway_deployment" "_" {
   lifecycle {
     create_before_destroy = true
   }
+  
+  # Triggers a re-deployment to the stage   
+  triggers = {
+    redeployment = base64sha256(data.template_file._.template)
+  }
 }
 
 resource "aws_api_gateway_stage" "_" {
