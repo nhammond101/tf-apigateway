@@ -8,6 +8,8 @@ variable "namespace" {
 
 variable "region" {
   description = "AWS region"
+  type        = string
+  default     = "us-east-1"
 }
 
 variable "resource_tag_name" {
@@ -27,7 +29,17 @@ variable "api_template" {
 
 variable "api_template_vars" {
   description = "Variables required in the OpenAPI template file"
-  type        = map
+  type        = map(string)
+}
+
+variable "api_domain_name" {
+  description = "Domain name of the API Gateway REST API for self-signed TLS certificate"
+  type        = string
+}
+
+variable "acm_certificate_arn" {
+  description = "The ARN of the ACM certificate to use for the custom domain name"
+  type        = string
 }
 
 variable "api_throttling_rate_limit" {
@@ -67,7 +79,7 @@ variable "xray_tracing_enabled" {
 # -----------------------------------------------------------------------------
 variable "resources" {
   description = "Methods that have Cloudwatch alarms enabled"
-  type        = map
+  type        = map(string)
 }
 
 variable "latency_threshold_p95" {

@@ -1,6 +1,5 @@
 locals {
   resource_name_prefix = "${var.namespace}-${var.resource_tag_name}"
-  api_url              = "${aws_api_gateway_deployment._.invoke_url}${aws_api_gateway_stage._.stage_name}"
   api_name             = "${local.resource_name_prefix}-${var.api_name}"
 }
 
@@ -8,6 +7,10 @@ data "template_file" "_" {
   template = var.api_template
 
   vars = var.api_template_vars
+}
+
+data "aws_api_gateway_domain_name" "_" {
+  domain_name = var.api_domain_name
 }
 
 resource "aws_api_gateway_rest_api" "_" {
@@ -24,8 +27,8 @@ resource "aws_api_gateway_deployment" "_" {
   lifecycle {
     create_before_destroy = true
   }
-  
-  # Triggers a re-deployment to the stage   
+
+  # Triggers a re-deployment to the stage
   triggers = {
     redeployment = base64sha256(data.template_file._.template)
   }
@@ -58,8 +61,26 @@ resource "aws_api_gateway_method_settings" "_" {
   }
 }
 
+#
+# Domain Setup
+#
+resource "aws_api_gateway_domain_name" "_" {
+  domain_name              = var.api_domain_name
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+  regional_certificate_arn = var.acm_certificate_arn
+  security_policy = "TLS_1_2"
+}
+
+resource "aws_api_gateway_base_path_mapping" "_" {
+  api_id      = aws_api_gateway_rest_api._.id
+  domain_name = aws_api_gateway_domain_name._.domain_name
+  stage_name  = aws_api_gateway_stage._.stage_name
+}
+
 # -----------------------------------------------------------------------------
-# CloudWatch: API Gateway 
+# CloudWatch: API Gateway
 # -----------------------------------------------------------------------------
 module "cloudwatch_alarms_apigateway" {
   source = "./cloudwatch-alarms-apigateway"
