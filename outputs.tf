@@ -11,11 +11,11 @@ output "api_url" {
 }
 
 output "api_domain_name" {
-  value = data.aws_api_gateway_domain_name._.regional_domain_name
+  value = var.api_domain_name
 }
 
 output "api_name" {
-  value = local.api_name
+  value = var.api_name
 }
 
 output "api_stage" {

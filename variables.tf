@@ -35,11 +35,13 @@ variable "api_template_vars" {
 variable "api_domain_name" {
   description = "Domain name of the API Gateway REST API for self-signed TLS certificate"
   type        = string
+  default     = ""
 }
 
 variable "acm_certificate_arn" {
   description = "The ARN of the ACM certificate to use for the custom domain name"
   type        = string
+  default     = ""
 }
 
 variable "api_throttling_rate_limit" {

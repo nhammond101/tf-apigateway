@@ -1,6 +1,5 @@
 locals {
   resource_name_prefix = "${var.namespace}-${var.resource_tag_name}"
-  api_name             = "${local.resource_name_prefix}-${var.api_name}"
 }
 
 data "template_file" "_" {
@@ -10,11 +9,12 @@ data "template_file" "_" {
 }
 
 data "aws_api_gateway_domain_name" "_" {
+  count = var.api_domain_name == "" ? 0: 1
   domain_name = var.api_domain_name
 }
 
 resource "aws_api_gateway_rest_api" "_" {
-  name           = local.api_name
+  name           = var.api_name
   api_key_source = "HEADER"
 
   body = data.template_file._.rendered
@@ -71,11 +71,15 @@ resource "aws_api_gateway_domain_name" "_" {
   }
   regional_certificate_arn = var.acm_certificate_arn
   security_policy = "TLS_1_2"
+
+  count  = var.api_domain_name == "" ? 0 :1
 }
 
 resource "aws_api_gateway_base_path_mapping" "_" {
+  count  = var.api_domain_name == "" ? 0 :1
+
   api_id      = aws_api_gateway_rest_api._.id
-  domain_name = aws_api_gateway_domain_name._.domain_name
+  domain_name = aws_api_gateway_domain_name._[0].domain_name
   stage_name  = aws_api_gateway_stage._.stage_name
 }
 
@@ -89,7 +93,7 @@ module "cloudwatch_alarms_apigateway" {
   region            = var.region
   resource_tag_name = var.resource_tag_name
 
-  api_name  = local.api_name
+  api_name  = var.api_name
   api_stage = aws_api_gateway_stage._.stage_name
 
   resources = var.resources
