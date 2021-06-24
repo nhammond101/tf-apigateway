@@ -7,7 +7,7 @@ output "rest_api_id" {
 }
 
 output "api_url" {
-  value = aws_api_gateway_deployment._.invoke_url
+  value = aws_api_gateway_domain_name._[0].regional_domain_name
 }
 
 output "api_domain_name" {
