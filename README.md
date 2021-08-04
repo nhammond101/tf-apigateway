@@ -19,7 +19,7 @@ Call the module with the specific version you want using the ```ref``` query par
 # API Gateway
 # -----------------------------------------------------------------------------
 module "apigateway" {
-  source            = "github.com/rpstreef/tf-apigateway?ref=v1.0"
+  source            = "github.com/nhammond101/tf-apigateway?ref=v1.5.3"
   resource_tag_name = var.resource_tag_name
   namespace         = var.namespace
   region            = var.region
