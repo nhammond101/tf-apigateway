@@ -9,6 +9,7 @@ data "template_file" "_" {
 }
 
 data "aws_api_gateway_domain_name" "_" {
+  depends_on = [aws_api_gateway_domain_name._]
   count = var.api_domain_name == "" ? 0: 1
   domain_name = var.api_domain_name
 }
