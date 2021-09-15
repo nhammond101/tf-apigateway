@@ -9,8 +9,8 @@ data "template_file" "_" {
 }
 
 data "aws_api_gateway_domain_name" "_" {
-  depends_on = [aws_api_gateway_domain_name._]
-  count = var.api_domain_name == "" ? 0: 1
+  depends_on  = [aws_api_gateway_domain_name._]
+  count       = var.api_domain_name == "" ? 0 : 1
   domain_name = var.api_domain_name
 }
 
@@ -66,22 +66,23 @@ resource "aws_api_gateway_method_settings" "_" {
 # Domain Setup
 #
 resource "aws_api_gateway_domain_name" "_" {
-  domain_name              = var.api_domain_name
+  domain_name = var.api_domain_name
   endpoint_configuration {
     types = ["REGIONAL"]
   }
   regional_certificate_arn = var.acm_certificate_arn
-  security_policy = "TLS_1_2"
+  security_policy          = "TLS_1_2"
 
-  count  = var.api_domain_name == "" ? 0 :1
+  count = var.api_domain_name == "" ? 0 : 1
 }
 
 resource "aws_api_gateway_base_path_mapping" "_" {
-  count  = var.api_domain_name == "" ? 0 :1
+  count = var.api_domain_name == "" ? 0 : 1
 
   api_id      = aws_api_gateway_rest_api._.id
   domain_name = aws_api_gateway_domain_name._[0].domain_name
   stage_name  = aws_api_gateway_stage._.stage_name
+  base_path   = var.api_base_path
 }
 
 # -----------------------------------------------------------------------------

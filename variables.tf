@@ -38,6 +38,12 @@ variable "api_domain_name" {
   default     = ""
 }
 
+variable "api_base_path" {
+  description = "The base path to use for custom domain mappings"
+  type        = string
+  default     = ""
+}
+
 variable "acm_certificate_arn" {
   description = "The ARN of the ACM certificate to use for the custom domain name"
   type        = string
