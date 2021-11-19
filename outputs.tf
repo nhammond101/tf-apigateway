@@ -25,3 +25,11 @@ output "api_stage" {
 output "api_root_resource_id" {
   value = aws_api_gateway_rest_api._.root_resource_id
 }
+
+output "regional_domain_zone_id" {
+  value = length(aws_api_gateway_domain_name._) > 0 ? aws_api_gateway_domain_name._[0].regional_zone_id : null
+}
+
+output "execution_arn" {
+  value = aws_api_gateway_rest_api._.execution_arn
+}
