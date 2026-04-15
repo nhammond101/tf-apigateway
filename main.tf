@@ -1,11 +1,6 @@
 locals {
   resource_name_prefix = "${var.namespace}-${var.resource_tag_name}"
-}
-
-data "template_file" "_" {
-  template = var.api_template
-
-  vars = var.api_template_vars
+  template_file = templatestring(var.api_template, var.api_template_vars)
 }
 
 data "aws_api_gateway_domain_name" "_" {
@@ -18,7 +13,7 @@ resource "aws_api_gateway_rest_api" "_" {
   name           = var.api_name
   api_key_source = "HEADER"
 
-  body = data.template_file._.rendered
+  body = local.template_file
 }
 
 resource "aws_api_gateway_deployment" "_" {
@@ -31,7 +26,7 @@ resource "aws_api_gateway_deployment" "_" {
 
   # Triggers a re-deployment to the stage
   triggers = {
-    redeployment = base64sha256(data.template_file._.template)
+    redeployment = base64sha256(local.template_file)
   }
 }
 
